@@ -53,7 +53,7 @@ export function CustomerSelector() {
           Kunde wählen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="flex items-center space-x-2">
@@ -67,7 +67,7 @@ export function CustomerSelector() {
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto">
           {customerProfiles.map((customer, index) => (
             <Card
               key={index}

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { Message, CustomerProfile, SessionMetrics, Scores, UserProfile, LeaderboardEntry, ChatHistory, Tip } from '@/types';
+import { callCustomerAI } from '@/lib/openai';
 
 interface ChatState {
   messages: Message[];
@@ -197,16 +198,45 @@ export const useChatStore = create<ChatState>()(
       }
     },
 
-    startSession: () => {
-      set({
+    startSession: async () => {
+      const { currentCustomer, apiKey, addMessage, setIsTyping } = get();
+
+      set((state) => ({
         isSessionActive: true,
         sessionMetrics: {
           ...initialMetrics,
           startTime: new Date(),
         },
         currentScores: initialScores,
-        messages: [],
-      });
+        messages: [], // Start with an empty message array
+      }));
+
+      if (currentCustomer && apiKey) {
+        setIsTyping(true);
+        try {
+          const initialCustomerPrompt = `Schreibe eine erste, individuelle Nachricht basierend auf diesem Anliegen: "${currentCustomer.issue}". Die Nachricht sollte natürlich klingen und das Anliegen des Kunden proaktiv vortragen.`;
+          const customerReply = await callCustomerAI([{ role: 'user', content: initialCustomerPrompt }], apiKey, currentCustomer);
+
+          const customerMessage = {
+            id: (Date.now() + 1).toString(),
+            content: customerReply,
+            role: 'customer' as const,
+            timestamp: new Date(),
+          };
+          addMessage(customerMessage);
+        } catch (error) {
+          console.error('Error generating initial customer message:', error);
+          // Optionally add an error message to the chat
+          addMessage({
+            id: Date.now().toString(),
+            content: 'Entschuldigung, ich konnte die erste Nachricht des Kunden nicht generieren.',
+            role: 'customer' as const,
+            timestamp: new Date(),
+          });
+        } finally {
+          setIsTyping(false);
+        }
+      }
     },
 
     endSession: () => {
