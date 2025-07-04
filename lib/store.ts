@@ -180,13 +180,39 @@ export const useChatStore = create<ChatState>()(
     chatHistory: mockChatHistory,
 
     addMessage: (message) => {
-      set((state) => ({
-        messages: [...state.messages, message],
-        sessionMetrics: {
-          ...state.sessionMetrics,
-          messageCount: state.sessionMetrics.messageCount + 1,
-        },
-      }));
+      set((state) => {
+        const newMessages = [...state.messages, message];
+        let newAverageResponseTime = state.sessionMetrics.averageResponseTime;
+
+        if (message.role === 'user') {
+          const lastCustomerMessage = state.messages
+            .slice()
+            .reverse()
+            .find((m) => m.role === 'customer');
+
+          if (lastCustomerMessage) {
+            const responseTime = (new Date(message.timestamp).getTime() - new Date(lastCustomerMessage.timestamp).getTime()) / 1000;
+            const userMessagesCount = state.messages.filter(m => m.role === 'user').length;
+            
+            if (userMessagesCount > 0) {
+                newAverageResponseTime =
+                (state.sessionMetrics.averageResponseTime * (userMessagesCount -1) + responseTime) /
+                userMessagesCount;
+            } else {
+                newAverageResponseTime = responseTime;
+            }
+          }
+        }
+
+        return {
+          messages: newMessages,
+          sessionMetrics: {
+            ...state.sessionMetrics,
+            messageCount: newMessages.length,
+            averageResponseTime: newAverageResponseTime,
+          },
+        };
+      });
     },
 
     setCurrentCustomer: (customer) => {

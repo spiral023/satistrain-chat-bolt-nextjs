@@ -34,9 +34,7 @@ export function ProgressPanel() {
   };
 
   const getAverageResponseTime = () => {
-    if (messages.length < 2) return 0;
-    // Simple calculation - in real app, you'd track actual response times
-    return Math.floor(Math.random() * 30) + 10; // 10-40 seconds
+    return Math.round(sessionMetrics.averageResponseTime);
   };
 
   const getAverageMessageLength = () => {
