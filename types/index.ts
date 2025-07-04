@@ -11,6 +11,8 @@ export interface Scores {
   empathy: number;
   clarity: number;
   helpfulness: number;
+  engagement: number;
+  professionalism: number;
   overall: number;
   trend: 'up' | 'down' | 'neutral';
 }

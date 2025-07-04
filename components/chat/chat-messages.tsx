@@ -12,8 +12,9 @@ export function ChatMessages() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    const scrollArea = scrollAreaRef.current;
+    if (scrollArea) {
+      scrollArea.scrollTop = scrollArea.scrollHeight;
     }
   }, [messages, isTyping]);
 

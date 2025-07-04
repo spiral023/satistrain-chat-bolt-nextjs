@@ -12,36 +12,60 @@ DEINE ROLLE:
 - Gib ausschließlich deine Antwort als Kunde zurück, ohne zusätzliche Informationen oder JSON-Strukturen.
 - Halte Antworten unter 200 Wörtern.`;
 
-const ANALYSIS_SYSTEM_PROMPT = `Du bist "SatisTrain Analyst", eine KI, die die Kommunikationsfähigkeiten eines Kundenservice-Mitarbeiters bewertet.
+const ANALYSIS_SYSTEM_PROMPT = `Du bist "SatisTrain Analyst", eine KI, die die Kommunikationsleistung eines Kundenservice-Mitarbeiters anhand neurowissenschaftlicher Prinzipien der Kundenkommunikation bewertet.
 
-DEINE ROLLE:
-- Du analysierst die Konversation zwischen einem Kunden (simuliert von einer anderen KI) und einem Kundenservice-Mitarbeiter (User).
-- Bewerte die letzte Antwort des Kundenservice-Mitarbeiters basierend auf den folgenden Kriterien.
+DEINE ROLLE
 
-BEWERTUNGSKRITERIEN für den Kundenservice-Mitarbeiter:
-- Empathie: Erkennt und spiegelt er die Gefühle des Kunden? Zeigt er Verständnis für die Situation des Kunden?
-- Klarheit: Kommuniziert er verständlich ohne Fachjargon? Sind seine Aussagen präzise und leicht nachvollziehbar?
-- Hilfsbereitschaft: Bietet er konkrete Lösungsschritte an? Geht er auf das Anliegen des Kunden ein und versucht, eine Lösung zu finden?
+Analysiere die Konversation zwischen einem Kunden (simuliert) und dem Kundenservice-Mitarbeiter (User).
 
-AUSGABEFORMAT:
+Bewerte ausschließlich die letzte Mitarbeiter-Antwort anhand der folgenden Kriterien.
+
+BEWERTUNGSKRITERIEN (0–100 Punkte je Kategorie)
+
+Empathie: Erkennt, benennt und spiegelt der Mitarbeiter die Gefühle und Bedürfnisse des Kunden? Baut er aktiv Rapport auf?
+
+Klarheit: Verwendet er verständliche, präzise Sprache ohne Fachjargon? Ist die Wortwahl freundlich und lösungsorientiert?
+
+Hilfsbereitschaft: Bietet er konkrete Schritte, Optionen oder Vereinbarungen an, die das Anliegen des Kunden lösen?
+
+Engagement: Führt er das Gespräch proaktiv? Setzt er gezielte Fragen ein, um den Kunden in die Lösungsfindung einzubeziehen?
+
+Professionalität: Bleibt der Mitarbeiter sachlich und respektvoll? Folgt die Antwort einer klaren Struktur (z.B. Problem, Lösung, Abschluss)?
+
+AUSGABEFORMAT
 {
-  "scores": {
-    "empathy": 85,
-    "clarity": 92,
-    "helpfulness": 78,
-    "overall": 85,
-    "trend": "up"
-  },
-  "tips": [
-    {
-      "importance": "high",
-      "text": "Verwende mehr emotionale Sprache",
-      "example": "Ich verstehe, dass das frustrierend sein muss..."
-    }
-  ]
+"scores": {
+"empathy": 85,
+"clarity": 92,
+"helpfulness": 90,
+"engagement": 88,
+"professionalism": 78,
+"overall": 87,
+"trend": "up"
+},
+"tips": [
+{
+"importance": "high",
+"text": "Stelle eine Skalierungsfrage, um die Zufriedenheit messbar zu machen",
+"example": "Auf einer Skala von 1 bis 10 – wie zufrieden wären Sie mit dieser Lösung?"
+},
+{
+"importance": "medium",
+"text": "Paraphrasiere die Kernbotschaft des Kunden, um Verständnis zu zeigen",
+"example": "Wenn ich Sie richtig verstehe, ist Ihnen vor allem wichtig, den Ersatz bis Freitag zu erhalten."
+}
+]
 }
 
-Gib ausschließlich gültiges JSON zurück. Die "overall" Punktzahl sollte der Durchschnitt der anderen drei Scores sein. Der "trend" sollte basierend auf der Verbesserung oder Verschlechterung der aktuellen "overall" Punktzahl im Vergleich zur vorherigen "overall" Punktzahl (falls vorhanden) gesetzt werden. Wenn keine vorherige Punktzahl vorhanden ist, setze ihn auf "neutral".`;
+REGELN
+
+Gib ausschließlich gültiges JSON zurück.
+
+"overall" ist der gerundete Durchschnitt aller fünf Teilscores.
+
+"trend": Vergleiche "overall" mit dem vorherigen "overall", setze auf "up", "down" oder "neutral", falls keine Vorwert vorhanden.
+
+Jede Kategorie mit weniger als 80 Punkten muss mindestens einen Tipp im Array "tips" erhalten.`;
 
 export async function callCustomerAI(
   messages: Array<{ role: string; content: string }>,
@@ -89,7 +113,8 @@ KUNDENPROFIL (das bist DU):
 
 export async function callAnalysisAI(
   conversationHistory: Array<{ role: string; content: string }>,
-  apiKey: string
+  apiKey: string,
+  previousOverallScore?: number // Add optional parameter for previous score
 ): Promise<{ scores: Scores; tips: Tip[] }> {
   if (!apiKey) {
     throw new Error('OpenAI API Key fehlt');
@@ -132,10 +157,25 @@ export async function callAnalysisAI(
     }
 
     const parsedContent = JSON.parse(contentToParse);
-    // Ensure overall score is calculated as average
-    const overall = Math.round((parsedContent.scores.empathy + parsedContent.scores.clarity + parsedContent.scores.helpfulness) / 3);
+    // Ensure overall score is calculated as average of all five sub-scores
+    const { empathy, clarity, helpfulness, engagement, professionalism } = parsedContent.scores;
+    const overall = Math.round(
+      (empathy + clarity + helpfulness + engagement + professionalism) / 5
+    );
+
+    let trend: 'up' | 'down' | 'neutral' = 'neutral';
+    if (previousOverallScore !== undefined) {
+      if (overall > previousOverallScore) {
+        trend = 'up';
+      } else if (overall < previousOverallScore) {
+        trend = 'down';
+      } else {
+        trend = 'neutral';
+      }
+    }
+
     return {
-      scores: { ...parsedContent.scores, overall },
+      scores: { ...parsedContent.scores, overall, trend },
       tips: parsedContent.tips,
     };
   } catch (error) {
@@ -146,6 +186,8 @@ export async function callAnalysisAI(
         empathy: 75,
         clarity: 75,
         helpfulness: 75,
+        engagement: 75,
+        professionalism: 75,
         overall: 75,
         trend: 'neutral',
       },

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useChatStore } from '@/lib/store';
-import { TrendingUp, TrendingDown, Minus, Heart, Eye, HelpCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Heart, Eye, HelpCircle, Handshake, Briefcase } from 'lucide-react';
 
 export function ScorePanel() {
   const { currentScores } = useChatStore();
@@ -47,6 +47,20 @@ export function ScorePanel() {
       value: currentScores.helpfulness,
       icon: <HelpCircle className="w-4 h-4" />,
       description: 'Lösungen anbieten',
+    },
+    {
+      key: 'engagement',
+      label: 'Engagement',
+      value: currentScores.engagement,
+      icon: <Handshake className="w-4 h-4" />,
+      description: 'Proaktive Gesprächsführung',
+    },
+    {
+      key: 'professionalism',
+      label: 'Professionalität',
+      value: currentScores.professionalism,
+      icon: <Briefcase className="w-4 h-4" />,
+      description: 'Angemessener Umgangston',
     },
   ];
 
