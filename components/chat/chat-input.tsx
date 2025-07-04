@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useChatStore } from '@/lib/store';
-import { callOpenAI } from '@/lib/openai';
+import { callCustomerAI, callAnalysisAI } from '@/lib/openai';
 import { Send, Mic, MicOff } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -13,15 +13,16 @@ export function ChatInput() {
   const [isListening, setIsListening] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
-  const { 
-    addMessage, 
-    setIsTyping, 
-    apiKey, 
-    currentCustomer, 
-    isSessionActive,
-    messages,
-    updateScores 
-  } = useChatStore();
+    const { 
+      addMessage, 
+      setIsTyping, 
+      apiKey, 
+      currentCustomer, 
+      isSessionActive,
+      messages,
+      updateScores,
+      updateLastCustomerMessage
+    } = useChatStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,36 +45,73 @@ export function ChatInput() {
     setIsTyping(true);
 
     try {
-      const conversationHistory = messages.slice(-10).map(msg => ({
-        role: msg.role === 'customer' ? 'assistant' : msg.role,
+      // Prepare conversation history for Customer AI
+      const customerConversationHistory = messages.slice(-10).map(msg => ({
+        role: msg.role === 'customer' ? 'assistant' : msg.role, // Customer AI sees previous customer messages as assistant
         content: msg.content,
       }));
-
-      conversationHistory.push({
+      customerConversationHistory.push({
         role: 'user',
-        content: message.trim(),
+        content: message.trim(), // User's current message
       });
 
-      const response = await callOpenAI(conversationHistory, apiKey, currentCustomer);
-      
-      setTimeout(() => {
-        const aiMessage = {
-          id: (Date.now() + 1).toString(),
-          content: response.ai_reply,
-          role: 'customer' as const,
-          timestamp: new Date(),
-          scores: response.scores,
-          tips: response.tips,
-        };
+      // Call Customer AI
+      const customerReply = await callCustomerAI(customerConversationHistory, apiKey, currentCustomer);
 
-        addMessage(aiMessage);
-        updateScores(response.scores);
-        setIsTyping(false);
-      }, 1000 + Math.random() * 2000);
+      const customerMessage = {
+        id: (Date.now() + 1).toString(),
+        content: customerReply,
+        role: 'customer' as const,
+        timestamp: new Date(),
+      };
+
+      // Add customer's reply to messages immediately
+      addMessage(customerMessage);
+
+      // Prepare conversation history for Analysis AI
+      // This should include the user's last message and the customer's reply
+      const analysisConversationHistory = [
+        { role: 'user' as const, content: userMessage.content },
+        { role: 'assistant' as const, content: customerMessage.content },
+      ];
+
+      // Call Analysis AI
+      const { scores, tips } = await callAnalysisAI(analysisConversationHistory, apiKey);
+
+      // Update the last customer message with scores and tips
+      // This requires a slight modification to how messages are stored or updated
+      // For now, we'll add a new message with scores/tips, or update the last one if possible.
+      // A better approach might be to update the existing customerMessage in the store.
+      // For simplicity, let's assume we update the last message added.
+      // This part needs careful consideration of Zustand's update patterns.
+      // For now, I'll add a new message with the scores/tips, which might not be ideal for UI.
+      // A more robust solution would be to update the existing customer message.
+
+      // To update the last message, we need a new action in useChatStore or modify addMessage.
+      // For now, I'll add a new message with the scores and tips.
+      // This will result in two "customer" messages in quick succession, one with content, one with scores/tips.
+      // This is a temporary solution for the split AI. A better UI integration would be to update the existing message.
+
+      // Let's refine this: The scores and tips should be associated with the *user's* last message,
+      // as they are a critique of the user's performance in response to the customer.
+      // So, the scores/tips should be added to the userMessage, not the customerMessage.
+
+      // Re-thinking: The scores and tips are for the *user's* performance in the *entire interaction*.
+      // They should be displayed after the customer's reply, as a summary of the user's last turn.
+      // The current structure adds scores/tips to the AI (customer) message.
+      // Let's stick to the original structure for now, but understand it's a score *of the user's reply*.
+
+      // The scores and tips are for the user's last message, but they are returned by the AI.
+      // So, they should be attached to the AI's response that follows the user's message.
+      // The current structure in `lib/store.ts` and `types/index.ts` supports this by having `scores` and `tips` on `Message`.
+
+      updateScores(scores); // Update overall scores for the score panel
+      updateLastCustomerMessage(scores, tips); // Update the last customer message with scores and tips
+      setIsTyping(false);
 
     } catch (error) {
-      console.error('Error calling OpenAI:', error);
-      toast.error('Fehler bei der KI-Antwort. Bitte versuchen Sie es erneut.');
+      console.error('Error in chat input:', error);
+      toast.error('Fehler bei der KI-Kommunikation. Bitte versuchen Sie es erneut.');
       setIsTyping(false);
     }
   };

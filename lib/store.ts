@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { Message, CustomerProfile, SessionMetrics, Scores, UserProfile, LeaderboardEntry, ChatHistory } from '@/types';
+import { Message, CustomerProfile, SessionMetrics, Scores, UserProfile, LeaderboardEntry, ChatHistory, Tip } from '@/types';
 
 interface ChatState {
   messages: Message[];
@@ -29,6 +29,7 @@ interface ChatState {
   setLeaderboard: (leaderboard: LeaderboardEntry[]) => void;
   setChatHistory: (history: ChatHistory[]) => void;
   addChatToHistory: (chat: ChatHistory) => void;
+  updateLastCustomerMessage: (scores: Scores, tips: Tip[]) => void;
 }
 
 const initialMetrics: SessionMetrics = {
@@ -283,6 +284,18 @@ export const useChatStore = create<ChatState>()(
       set((state) => ({
         chatHistory: [chat, ...state.chatHistory],
       }));
+    },
+
+    updateLastCustomerMessage: (scores, tips) => {
+      set((state) => {
+        const updatedMessages = state.messages.map((msg, index, arr) => {
+          if (index === arr.length - 1 && msg.role === 'customer') {
+            return { ...msg, scores, tips };
+          }
+          return msg;
+        });
+        return { messages: updatedMessages };
+      });
     },
   }))
 );
