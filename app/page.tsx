@@ -34,7 +34,7 @@ export default function Home() {
         console.error('Error loading user profile:', error);
       }
     }
-  }, [setCurrentCustomer, setApiKey, setUserProfile]);
+  }, []);
 
   return (
     <div className="h-screen flex flex-col">
