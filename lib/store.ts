@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { Message, CustomerProfile, SessionMetrics, Scores, UserProfile, LeaderboardEntry, ChatHistory, Tip } from '@/types';
+import { Message, CustomerProfile, SessionMetrics, Scores, UserProfile, LeaderboardEntry, ChatHistory, Tip, SessionReportData } from '@/types';
 import { callCustomerAI } from '@/lib/openai';
 
 interface ChatState {
@@ -14,6 +14,8 @@ interface ChatState {
   userProfile: UserProfile | null;
   leaderboard: LeaderboardEntry[];
   chatHistory: ChatHistory[];
+  isReportDialogOpen: boolean;
+  sessionReportData: SessionReportData | null;
   
   // Actions
   addMessage: (message: Message) => void;
@@ -31,6 +33,7 @@ interface ChatState {
   setChatHistory: (history: ChatHistory[]) => void;
   addChatToHistory: (chat: ChatHistory) => void;
   updateLastCustomerMessage: (scores: Scores, tips: Tip[]) => void;
+  setReportDialogOpen: (isOpen: boolean) => void;
 }
 
 const initialMetrics: SessionMetrics = {
@@ -178,6 +181,8 @@ export const useChatStore = create<ChatState>()(
     userProfile: null,
     leaderboard: mockLeaderboard,
     chatHistory: mockChatHistory,
+    isReportDialogOpen: false,
+    sessionReportData: null,
 
     addMessage: (message) => {
       set((state) => {
@@ -278,7 +283,6 @@ export const useChatStore = create<ChatState>()(
         const duration = Math.floor((endTime.getTime() - state.sessionMetrics.startTime.getTime()) / 1000);
         const xpEarned = state.currentScores.overall;
         
-        // Add to chat history
         const newHistoryEntry: ChatHistory = {
           id: Date.now().toString(),
           userId: state.userProfile?.id || 'current-user',
@@ -290,9 +294,25 @@ export const useChatStore = create<ChatState>()(
           xpEarned,
         };
         
+        const reportData: SessionReportData = {
+          overview: {
+            duration: `${Math.floor(duration / 60)}m ${duration % 60}s`,
+            messageCount: state.messages.length,
+            agentScore: state.currentScores.overall,
+            customerMood: state.currentCustomer?.mood || 'neutral',
+          },
+          rating: {
+            score: Math.round(state.currentScores.overall / 20),
+            comment: "Eine solide Leistung. Weiter so!",
+          },
+          tips: state.messages.flatMap(m => m.tips?.map(t => t.text) || []),
+        };
+
         set((prevState) => ({
           isSessionActive: false,
           chatHistory: [newHistoryEntry, ...prevState.chatHistory],
+          isReportDialogOpen: true,
+          sessionReportData: reportData,
         }));
       } else {
         set({ isSessionActive: false });
@@ -358,6 +378,10 @@ export const useChatStore = create<ChatState>()(
         });
         return { messages: updatedMessages };
       });
+    },
+
+    setReportDialogOpen: (isOpen) => {
+      set({ isReportDialogOpen: isOpen });
     },
   }))
 );

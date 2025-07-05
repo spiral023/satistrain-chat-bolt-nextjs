@@ -92,3 +92,17 @@ export interface ChatHistory {
   duration: number;
   xpEarned: number;
 }
+
+export interface SessionReportData {
+  overview: {
+    duration: string;
+    messageCount: number;
+    agentScore: number;
+    customerMood: 'happy' | 'neutral' | 'frustrated' | 'angry';
+  };
+  rating: {
+    score: number;
+    comment: string;
+  };
+  tips: string[];
+}
