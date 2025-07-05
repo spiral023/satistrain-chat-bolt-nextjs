@@ -4,12 +4,22 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useChatStore } from '@/lib/store';
-import { Bot, User, Atom as Customer } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { Bot, User, Atom as Customer, Clipboard as Copy } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Button } from '../ui/button';
 
 export function ChatMessages() {
   const { messages, currentCustomer, isTyping } = useChatStore();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  const handleCopy = (content: string, id: string) => {
+    navigator.clipboard.writeText(content);
+    setCopiedMessageId(id);
+    setTimeout(() => {
+      setCopiedMessageId(null);
+    }, 2000);
+  };
 
   useEffect(() => {
     const scrollViewport = scrollAreaRef.current?.querySelector(
@@ -82,12 +92,23 @@ export function ChatMessages() {
               )}
               
               <div className="flex flex-col space-y-1">
-                <div className={`rounded-lg px-3 py-2 ${getMessageStyle(message.role)}`}>
+                <div className={`group relative rounded-lg px-3 py-2 ${getMessageStyle(message.role)}`}>
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleCopy(message.content, message.id)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
                 </div>
                 
                 <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                   <span>{formatTime(message.timestamp)}</span>
+                  {copiedMessageId === message.id && (
+                    <span className="text-xs text-green-500">Copied!</span>
+                  )}
                   {message.scores && (
                     <Badge variant="outline" className="text-xs">
                       {message.scores.overall}%

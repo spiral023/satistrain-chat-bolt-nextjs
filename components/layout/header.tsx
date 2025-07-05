@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { ApiKeyDialog } from '@/components/setup/api-key-dialog';
 import { CustomerSelector } from '@/components/setup/customer-selector';
 import { ProfileDialog } from '@/components/profile/profile-dialog';
+import { KnowledgeDialog } from '@/components/knowledge/knowledge-dialog';
+import { Separator } from '@/components/ui/separator';
 import { useChatStore } from '@/lib/store';
 import { useTheme } from 'next-themes';
 import { Moon, Sun, MessageSquare } from 'lucide-react';
@@ -21,6 +23,8 @@ export function Header() {
         </div>
         
         <div className="flex items-center space-x-4 ml-auto">
+          <KnowledgeDialog />
+          <Separator orientation="vertical" className="h-6" />
           <CustomerSelector />
           <ApiKeyDialog />
           <ProfileDialog />
