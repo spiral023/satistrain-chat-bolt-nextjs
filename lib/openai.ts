@@ -83,7 +83,7 @@ export async function callCustomerAI(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
@@ -98,7 +98,7 @@ KUNDENPROFIL (das bist DU):
         },
         ...messages,
       ],
-      max_tokens: 200, // Limit tokens for customer reply
+      max_tokens: 260, // Limit tokens for customer reply
       temperature: 0.7,
     }),
   });
@@ -127,7 +127,7 @@ export async function callAnalysisAI(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
