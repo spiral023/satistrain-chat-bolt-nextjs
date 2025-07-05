@@ -5,6 +5,7 @@ import { ApiKeyDialog } from '@/components/setup/api-key-dialog';
 import { CustomerSelector } from '@/components/setup/customer-selector';
 import { ProfileDialog } from '@/components/profile/profile-dialog';
 import { KnowledgeDialog } from '@/components/knowledge/knowledge-dialog';
+import { QuizDialog } from '@/components/quiz/quiz-dialog';
 import { Separator } from '@/components/ui/separator';
 import { useChatStore } from '@/lib/store';
 import { useTheme } from 'next-themes';
@@ -23,6 +24,7 @@ export function Header() {
         </div>
         
         <div className="flex items-center space-x-4 ml-auto">
+          <QuizDialog />
           <KnowledgeDialog />
           <Separator orientation="vertical" className="h-6" />
           <CustomerSelector />
