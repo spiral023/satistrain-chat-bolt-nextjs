@@ -78,7 +78,7 @@ export function ApiKeyDialog() {
             <ol className="list-decimal list-inside space-y-1">
               <li>Besuchen Sie die OpenAI Platform</li>
               <li>Erstellen Sie ein Konto oder melden Sie sich an</li>
-              <li>Gehen Sie zu "API Keys" in Ihrem Dashboard</li>
+              <li>Gehen Sie zu &quot;API Keys&quot; in Ihrem Dashboard</li>
               <li>Erstellen Sie einen neuen API Key</li>
             </ol>
             <Button

@@ -74,7 +74,7 @@ export function SessionReportDialog() {
                 />
               ))}
             </div>
-            <p className="text-sm text-muted-foreground italic">"{rating.comment}"</p>
+            <p className="text-sm text-muted-foreground italic">&quot;{rating.comment}&quot;</p>
           </div>
 
           {/* Tips */}

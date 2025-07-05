@@ -98,7 +98,7 @@ export function TipsPanel() {
                 {tip.example && (
                   <div className="mt-2 p-2 bg-muted rounded-md">
                     <p className="text-xs text-muted-foreground mb-1">Beispiel:</p>
-                    <p className="text-xs italic">"{tip.example}"</p>
+                    <p className="text-xs italic">&quot;{tip.example}&quot;</p>
                   </div>
                 )}
               </div>

@@ -1,43 +1,20 @@
 "use client";
 
-import { useEffect } from 'react';
-import { Header } from '@/components/layout/header';
+import dynamic from 'next/dynamic';
+
+const Header = dynamic(() => import('@/components/layout/header').then(mod => mod.Header), { ssr: false });
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
 import { SidebarTabs } from '@/components/sidebar/sidebar-tabs';
 import { SessionReportDialog } from '@/components/session/session-report-dialog';
 import { ExplanationDialog } from '@/components/explanation/explanation-dialog';
-import { useChatStore } from '@/lib/store';
-import { getRandomCustomerProfile } from '@/lib/customer-profiles';
+import { ClientInit } from '@/components/setup/client-init';
 
 export default function Home() {
-  const { setCurrentCustomer, setApiKey, setUserProfile } = useChatStore();
-
-  useEffect(() => {
-    // Set default customer profile
-    setCurrentCustomer(getRandomCustomerProfile());
-    
-    // Load API key from session storage
-    const savedApiKey = sessionStorage.getItem('openai_api_key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-    }
-
-    // Load user profile from localStorage
-    const savedProfile = localStorage.getItem('user_profile');
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        setUserProfile(profile);
-      } catch (error) {
-        console.error('Error loading user profile:', error);
-      }
-    }
-  }, []);
-
   return (
     <div className="h-screen flex flex-col">
+      <ClientInit />
       <Header />
       
       <div className="flex-1 flex overflow-hidden">
