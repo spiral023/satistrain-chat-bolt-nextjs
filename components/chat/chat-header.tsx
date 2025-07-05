@@ -20,12 +20,14 @@ export function ChatHeader() {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
-    if (!isSessionActive) return;
+    if (!isSessionActive || !sessionMetrics.startTime) return;
 
     const interval = setInterval(() => {
-      const now = Date.now();
-      const elapsed = Math.floor((now - sessionMetrics.startTime.getTime()) / 1000);
-      setElapsedTime(elapsed);
+      if (sessionMetrics.startTime) {
+        const now = Date.now();
+        const elapsed = Math.floor((now - sessionMetrics.startTime.getTime()) / 1000);
+        setElapsedTime(elapsed);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
