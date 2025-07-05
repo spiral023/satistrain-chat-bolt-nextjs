@@ -7,6 +7,7 @@ import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
 import { SidebarTabs } from '@/components/sidebar/sidebar-tabs';
 import { SessionReportDialog } from '@/components/session/session-report-dialog';
+import { ExplanationDialog } from '@/components/explanation/explanation-dialog';
 import { useChatStore } from '@/lib/store';
 import { getRandomCustomerProfile } from '@/lib/customer-profiles';
 
@@ -53,6 +54,7 @@ export default function Home() {
         </div>
       </div>
       <SessionReportDialog />
+      <ExplanationDialog />
     </div>
   );
 }
