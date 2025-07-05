@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,24 +9,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Rocket, Zap, Target } from "lucide-react";
+import { useChatStore } from "@/lib/store";
 
 export function ExplanationDialog() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const hasVisited = localStorage.getItem("hasVisited");
-    if (!hasVisited) {
-      setIsOpen(true);
-      localStorage.setItem("hasVisited", "true");
-    }
-  }, []);
+  const { isExplanationDialogOpen, setExplanationDialogOpen } = useChatStore();
 
   const handleClose = () => {
-    setIsOpen(false);
+    setExplanationDialogOpen(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isExplanationDialogOpen} onOpenChange={setExplanationDialogOpen}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center mb-4">

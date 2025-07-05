@@ -13,7 +13,7 @@ import { Moon, Sun, MessageSquare } from 'lucide-react';
 
 export function Header() {
   const { theme, setTheme } = useTheme();
-  const { apiKey, userProfile } = useChatStore();
+  const { apiKey, userProfile, setExplanationDialogOpen } = useChatStore();
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -24,6 +24,7 @@ export function Header() {
         </div>
         
         <div className="flex items-center space-x-4 ml-auto">
+          <Button variant="outline" onClick={() => setExplanationDialogOpen(true)}>Willkommen</Button>
           <QuizDialog />
           <KnowledgeDialog />
           <Separator orientation="vertical" className="h-6" />

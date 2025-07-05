@@ -16,6 +16,7 @@ interface ChatState {
   chatHistory: ChatHistory[];
   isReportDialogOpen: boolean;
   sessionReportData: SessionReportData | null;
+  isExplanationDialogOpen: boolean;
   
   // Actions
   addMessage: (message: Message) => void;
@@ -34,6 +35,7 @@ interface ChatState {
   addChatToHistory: (chat: ChatHistory) => void;
   updateLastCustomerMessage: (scores: Scores, tips: Tip[]) => void;
   setReportDialogOpen: (isOpen: boolean) => void;
+  setExplanationDialogOpen: (isOpen: boolean) => void;
 }
 
 const initialMetrics: SessionMetrics = {
@@ -183,6 +185,7 @@ export const useChatStore = create<ChatState>()(
     chatHistory: mockChatHistory,
     isReportDialogOpen: false,
     sessionReportData: null,
+    isExplanationDialogOpen: false,
 
     addMessage: (message) => {
       set((state) => {
@@ -382,6 +385,10 @@ export const useChatStore = create<ChatState>()(
 
     setReportDialogOpen: (isOpen) => {
       set({ isReportDialogOpen: isOpen });
+    },
+
+    setExplanationDialogOpen: (isOpen) => {
+      set({ isExplanationDialogOpen: isOpen });
     },
   }))
 );
