@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { useChatStore } from '@/lib/store';
 import { customerProfiles, getRandomCustomerProfile } from '@/lib/customer-profiles';
 import { Users, Shuffle } from 'lucide-react';
@@ -16,6 +17,7 @@ export function CustomerSelector() {
   const [open, setOpen] = useState(false);
   const [selectedMood, setSelectedMood] = useState<string>('all');
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const { currentCustomer, setCurrentCustomer } = useChatStore();
 
   const handleSelectCustomer = (customer: any) => {
@@ -53,9 +55,13 @@ export function CustomerSelector() {
     return customerProfiles.filter(customer => {
       const moodMatch = selectedMood === 'all' || customer.mood === selectedMood;
       const levelMatch = selectedLevel === 'all' || customer.difficulty === parseInt(selectedLevel);
-      return moodMatch && levelMatch;
+      const searchMatch = searchTerm === '' || 
+                          customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          customer.issue.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          customer.background.toLowerCase().includes(searchTerm.toLowerCase());
+      return moodMatch && levelMatch && searchMatch;
     });
-  }, [selectedMood, selectedLevel]);
+  }, [selectedMood, selectedLevel, searchTerm]);
 
   const moodCounts = useMemo(() => {
     const counts: { [key: string]: number } = { all: customerProfiles.length };
@@ -81,7 +87,7 @@ export function CustomerSelector() {
           Kunde wählen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-7xl"> {/* Increased width */}
+      <DialogContent className="max-w-7xl max-h-[800px] translate-y-[-50%]"> {/* Increased width, adjusted height and moved up */}
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="flex items-center space-x-2">
@@ -95,41 +101,49 @@ export function CustomerSelector() {
           </DialogTitle>
         </DialogHeader>
         
-        <div className="flex space-x-4 mb-4">
-          <div className="flex-1">
-            <Label htmlFor="mood-filter">Stimmung</Label>
-            <Select value={selectedMood} onValueChange={setSelectedMood}>
-              <SelectTrigger id="mood-filter">
-                <SelectValue placeholder="Alle Stimmungen" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle ({moodCounts.all})</SelectItem>
-                <SelectItem value="happy">Zufrieden ({moodCounts.happy || 0})</SelectItem>
-                <SelectItem value="neutral">Neutral ({moodCounts.neutral || 0})</SelectItem>
-                <SelectItem value="frustrated">Frustriert ({moodCounts.frustrated || 0})</SelectItem>
-                <SelectItem value="angry">Verärgert ({moodCounts.angry || 0})</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex-1">
-            <Label htmlFor="level-filter">Level</Label>
-            <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-              <SelectTrigger id="level-filter">
-                <SelectValue placeholder="Alle Level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle ({levelCounts.all})</SelectItem>
-                {[1, 2, 3, 4, 5].map(level => (
-                  <SelectItem key={level} value={level.toString()}>
-                    Level {level} ({levelCounts[level.toString()] || 0})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="flex flex-col space-y-4 mb-4">
+          <Input
+            placeholder="Kunden suchen..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full"
+          />
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <Label htmlFor="mood-filter">Stimmung</Label>
+              <Select value={selectedMood} onValueChange={setSelectedMood}>
+                <SelectTrigger id="mood-filter">
+                  <SelectValue placeholder="Alle Stimmungen" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle ({moodCounts.all})</SelectItem>
+                  <SelectItem value="happy">Zufrieden ({moodCounts.happy || 0})</SelectItem>
+                  <SelectItem value="neutral">Neutral ({moodCounts.neutral || 0})</SelectItem>
+                  <SelectItem value="frustrated">Frustriert ({moodCounts.frustrated || 0})</SelectItem>
+                  <SelectItem value="angry">Verärgert ({moodCounts.angry || 0})</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="level-filter">Level</Label>
+              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                <SelectTrigger id="level-filter">
+                  <SelectValue placeholder="Alle Level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle ({levelCounts.all})</SelectItem>
+                  {[1, 2, 3, 4, 5].map(level => (
+                    <SelectItem key={level} value={level.toString()}>
+                      Level {level} ({levelCounts[level.toString()] || 0})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto">
           {filteredCustomers.length === 0 ? (
             <p className="col-span-3 text-center text-muted-foreground">Keine Kunden gefunden, die den Filtern entsprechen.</p>
           ) : (

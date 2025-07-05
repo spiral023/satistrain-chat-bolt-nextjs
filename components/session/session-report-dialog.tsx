@@ -19,7 +19,7 @@ export function SessionReportDialog() {
     return null;
   }
 
-  const { overview, rating, tips } = sessionReportData;
+  const { overview, rating, detailedScores, tips } = sessionReportData;
 
   return (
     <Dialog open={isReportDialogOpen} onOpenChange={setReportDialogOpen}>
@@ -51,7 +51,7 @@ export function SessionReportDialog() {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-muted-foreground">Customer Mood</span>
-                <Badge variant={overview.customerMood === 'happy' ? 'default' : 'destructive'}>
+                <Badge>
                   {overview.customerMood}
                 </Badge>
               </div>
@@ -64,7 +64,7 @@ export function SessionReportDialog() {
               <Star className="mr-2 h-5 w-5 text-yellow-500" />
               Rating
             </h3>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 justify-center">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
@@ -74,7 +74,36 @@ export function SessionReportDialog() {
                 />
               ))}
             </div>
-            <p className="text-sm text-muted-foreground italic">&quot;{rating.comment}&quot;</p>
+          </div>
+
+          {/* Detailed Rating */}
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold flex items-center">
+              <MessageSquare className="mr-2 h-5 w-5 text-blue-500" />
+              Detailed Rating
+            </h3>
+            <div className="grid grid-cols-2 gap-4 rounded-lg border p-4">
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground">Empathy</span>
+                <span className="font-bold">{detailedScores.empathy}%</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground">Clarity</span>
+                <span className="font-bold">{detailedScores.clarity}%</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground">Helpfulness</span>
+                <span className="font-bold">{detailedScores.helpfulness}%</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground">Engagement</span>
+                <span className="font-bold">{detailedScores.engagement}%</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground">Professionalism</span>
+                <span className="font-bold">{detailedScores.professionalism}%</span>
+              </div>
+            </div>
           </div>
 
           {/* Tips */}

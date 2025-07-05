@@ -104,5 +104,6 @@ export interface SessionReportData {
     score: number;
     comment: string;
   };
+  detailedScores: Scores; // Added for detailed rating
   tips: string[];
 }

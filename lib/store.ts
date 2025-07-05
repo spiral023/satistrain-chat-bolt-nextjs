@@ -308,6 +308,7 @@ export const useChatStore = create<ChatState>()(
             score: Math.round(state.currentScores.overall / 20),
             comment: "Eine solide Leistung. Weiter so!",
           },
+          detailedScores: state.currentScores, // Populate detailed scores
           tips: state.messages.flatMap(m => m.tips?.map(t => t.text) || []),
         };
 
