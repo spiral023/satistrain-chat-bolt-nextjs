@@ -1,6 +1,6 @@
 # SatisTrain Chat
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d1e9c9bb-1234-4abc-9def-567890abcdef/deploy-status)](https://app.netlify.com/sites/satistrain-chat/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/92fcf6f7-5ffe-40c1-a48d-8bcbf9ad846f/deploy-status)](https://app.netlify.com/projects/satistrain-bolt/deploys)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 SatisTrain Chat is an **AI‑powered customer‑service training platform**. It lets agents practice real‑life conversations with simulated customers, get live coaching, and track their growth over time.
