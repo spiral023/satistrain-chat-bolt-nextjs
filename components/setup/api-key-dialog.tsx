@@ -33,18 +33,23 @@ export function ApiKeyDialog() {
         body: JSON.stringify({ secretPw: secretPw.trim() }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Fehler bei der Überprüfung des Secret PW');
+        throw new Error(data.error || 'Fehler bei der Überprüfung des Secret PW');
       }
 
-      const data = await response.json();
       setApiKey(data.apiKey);
       setOpen(false);
       setSecretPw('');
       toast.success('API Key erfolgreich über Secret PW eingerichtet');
     } catch (error: any) {
-      toast.error(error.message);
+      // Fehlerbehandlung für den Fall, dass die Antwort kein gültiges JSON ist
+      if (error instanceof SyntaxError) {
+        toast.error("Fehler: Ungültige Antwort vom Server.");
+      } else {
+        toast.error(error.message);
+      }
     }
   };
 
