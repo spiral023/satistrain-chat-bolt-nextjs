@@ -36,6 +36,68 @@ import {
 
 const knowledgeData = [
   {
+    category: "Psychologische Grundlagen der Kommunikation",
+    icon: <Brain className="h-5 w-5 text-indigo-600" />,
+    points: [
+      "**Resonanzprinzip:** Vertrauen entsteht durch empathisches Einstimmen auf den Gesprächspartner.",
+      "**Priming-Effekt:** Die Wortwahl und Formulierungen beeinflussen die Wahrnehmung und Reaktion des Kunden.",
+      "**Mehrere Ebenen:** Kommunikation findet immer gleichzeitig auf der verbalen (was gesagt wird) und nonverbalen (wie es gesagt wird) Ebene statt.",
+    ],
+  },
+  {
+    category: "Kommunikationskanäle und Großsprachen",
+    icon: <MessageCircle className="h-5 w-5 text-blue-500" />,
+    points: [
+      "**Bewusste & Unbewusste Kanäle:** Verbale Aussagen sind bewusst, während nonverbale Signale oft unbewusst gesendet und empfangen werden.",
+      "**Großsprachen:** Blickkontakt, Stimme und Körpersprache sind entscheidend für die Beziehungsebene.",
+      "**Kongruenz:** Die Übereinstimmung von verbalen und nonverbalen Signalen schafft Glaubwürdigkeit und Vertrauen.",
+    ],
+  },
+  {
+    category: "Rapport aufbauen: Joining – Pacing – Leading",
+    icon: <Handshake className="h-5 w-5 text-lime-600" />,
+    points: [
+      "**Joining:** Emotionales Ankommen und eine positive Atmosphäre schaffen.",
+      "**Pacing:** Sich an die Sprache, den Tonfall und die Körperhaltung des Kunden anpassen, um eine Verbindung herzustellen.",
+      "**Leading:** Das Gespräch durch lösungsorientierte Fragen und ethische Vorschläge gezielt in eine konstruktive Richtung lenken.",
+    ],
+  },
+  {
+    category: "Paraphrasieren",
+    icon: <Ear className="h-5 w-5 text-purple-500" />,
+    points: [
+      "**Verständnissicherung:** Die Aussage des Kunden mit eigenen Worten wiederholen, um sicherzustellen, dass man sie korrekt verstanden hat.",
+      "**Deeskalation:** Bringt emotionale Gespräche auf eine sachliche Ebene zurück.",
+      "**Wertschätzung:** Zeigt dem Kunden, dass man ihm aufmerksam zuhört und seine Anliegen ernst nimmt.",
+    ],
+  },
+  {
+    category: "Fragetechniken",
+    icon: <HelpCircle className="h-5 w-5 text-teal-500" />,
+    points: [
+      "**Offene Fragen:** Dienen dem Informationsgewinn und erfassen die Sichtweise des Kunden.",
+      "**Geschlossene Fragen:** Führen zu klaren Ja-/Nein-Antworten und helfen, Entscheidungen herbeizuführen.",
+      "**Lösungsorientierte Fragen:** Lenken den Fokus weg vom Problem und hin zu zukünftigen Möglichkeiten.",
+      "**Zielfragen:** Helfen dabei, ein gemeinsames und klares Ziel für das Gespräch zu definieren.",
+      "**Skalierungsfragen:** Machen subjektive Einschätzungen messbar und greifbar (z.B. „Auf einer Skala von 1 bis 10...“).",
+      "**Konkretisierungsfragen:** Klären vage oder allgemeine Aussagen und bringen Details ans Licht.",
+      "**Metaphern- und Schlüsselwortfragen:** Greifen die Sprache des Kunden auf, um Rapport zu stärken.",
+      "**Zirkuläre Fragen:** Regen zum Perspektivwechsel an, indem sie die Sichtweise Dritter einbeziehen.",
+      "**Verschlechterungsfragen:** Machen dem Kunden bewusst, welche Ressourcen er bereits hat, um eine Situation zu meistern.",
+    ],
+  },
+  {
+    category: "Gesprächsstruktur in fünf Phasen",
+    icon: <Compass className="h-5 w-5 text-orange-500" />,
+    points: [
+      "**1. Beziehungsaufbau:** Vertrauen und eine positive Gesprächsatmosphäre schaffen.",
+      "**2. Thema klären:** Das Anliegen des Kunden genau erfassen und durch Paraphrasieren bestätigen.",
+      "**3. Zieldefinition:** Eine klare und gemeinsame Zielvereinbarung für das Gespräch treffen.",
+      "**4. Lösungsphase:** Mit gezielten Fragen und Vorschlägen gemeinsam eine passende Lösung erarbeiten.",
+      "**5. Abschluss:** Die Zufriedenheit des Kunden prüfen, die nächsten Schritte fixieren und sich wertschätzend verabschieden.",
+    ],
+  },
+  {
     category: "Grundlagen der Kommunikation",
     icon: <MessageCircle className="h-5 w-5 text-blue-500" />,
     points: [
@@ -96,15 +158,6 @@ const knowledgeData = [
       "**Körpersprache spiegeln:** Offene Haltung, Blickkontakt, freundliches Nicken.",
       "**Stimme & Tonfall:** Geschwindigkeit, Lautstärke und Betonung situationsgerecht anpassen.",
       "**Micro‑Signals beachten:** Gesichtsausdruck und Gestik des Kunden lesen (Video‑Call, Vor‑Ort).",
-    ],
-  },
-  {
-    category: "Fragetechniken & Bedarfsermittlung",
-    icon: <HelpCircle className="h-5 w-5 text-teal-500" />,
-    points: [
-      "**Offene Fragen:** „Wie kann ich Ihnen am besten helfen?“",
-      "**Konkretisierungsfragen:** „Können Sie ein Beispiel nennen?“",
-      "**Alternativfragen steuern Entscheidungen:** „Bevorzugen Sie Variante A oder B?“",
     ],
   },
   {
